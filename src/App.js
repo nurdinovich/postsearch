@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPosts, setSearchTerm } from './store/actions';
+import PostList from './components/PostList';
+import Search from './components/Search';
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+  const { posts, searchTerm } = useSelector((state) => state);
+
+  useEffect(() => {
+    dispatch(fetchPosts());
+  }, [dispatch]);
+
+  const handleSearch = (term) => {
+    dispatch(setSearchTerm(term));
+  };
+
+  const filteredPosts = posts.filter(
+    (post) =>
+      post.title.includes(searchTerm) ||
+      post.body.includes(searchTerm)
+  );
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Search onSearch={handleSearch} />
+      <PostList posts={filteredPosts} />
     </div>
   );
-}
+};
 
 export default App;
